@@ -1,14 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { getPassByDobAndPhone } from '../lib/api.js'
+import { dobToInputValue, dobFromInputValue } from '../lib/dateUtils.js'
 import PassDisplay from './PassDisplay.jsx'
-
-/** Normalize DOB to DD/MM/YYYY for matching (script normalizes the same way). */
-function normalizeDobInput(value) {
-  const digits = value.replace(/\D/g, '')
-  if (digits.length <= 2) return digits
-  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`
-  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`
-}
 
 /**
  * View my pass: pass is shown directly below the form in the same page (no iframe).
@@ -22,11 +15,6 @@ export default function ViewMyPass() {
   const [pass, setPass] = useState(null)
   const [notFound, setNotFound] = useState(false)
   const passContainerRef = useRef(null)
-
-  function handleDobChange(e) {
-    const v = e.target.value
-    setDob(normalizeDobInput(v))
-  }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -70,11 +58,9 @@ export default function ViewMyPass() {
         <label className="field">
           <span>Date of birth</span>
           <input
-            type="text"
-            placeholder="DD/MM/YYYY"
-            value={dob}
-            onChange={handleDobChange}
-            maxLength={10}
+            type="date"
+            value={dobToInputValue(dob)}
+            onChange={(e) => setDob(dobFromInputValue(e.target.value))}
             required
           />
         </label>

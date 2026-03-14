@@ -295,30 +295,153 @@ select {
   font-weight: 500;
 }
 
-/* Pass display */
-.pass-display {
+/* Pass card – landscape 3:2, structured layout, ISKCON Prayagraj */
+.pass-card {
   margin-top: 2rem;
-  padding: 1.5rem;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  max-width: 360px;
+  max-width: 100%;
+  width: 100%;
+  --pass-font-heading: 'Playfair Display', Georgia, serif;
+  --pass-font-body: 'Source Sans 3', system-ui, sans-serif;
 }
 
-.pass-heading {
-  margin: 0 0 1rem;
-  font-size: 1rem;
-  font-weight: 700;
+.pass-card-inner {
+  aspect-ratio: 3 / 2;
+  max-width: 600px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  background: #fff;
+  border: 1px solid #e7e5e4;
+}
+
+.pass-deity-panel {
+  width: 36%;
+  min-width: 0;
+  background: linear-gradient(180deg, #92400e 0%, #78350f 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem;
+}
+
+.pass-deity-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.pass-deity-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fef3c7;
   text-align: center;
+  padding: 0.5rem;
+  font-family: var(--pass-font-body);
+}
+
+.pass-deity-fallback-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  opacity: 0.9;
   text-transform: uppercase;
+}
+
+.pass-deity-fallback-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0.25rem 0;
+  line-height: 1.2;
+}
+
+.pass-deity-fallback-place {
+  font-size: 0.6rem;
+  opacity: 0.85;
+}
+
+.pass-content {
+  flex: 1;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #fffbeb;
+  font-family: var(--pass-font-body);
+}
+
+.pass-header {
+  padding: 0.6rem 1rem 0.5rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.pass-org-name {
+  margin: 0;
+  font-family: var(--pass-font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #78350f;
   letter-spacing: 0.02em;
 }
 
-.pass-body {
+.pass-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b45309;
+  background: #fef3c7;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #fcd34d;
+}
+
+.pass-divider {
+  height: 1px;
+  background: linear-gradient(90deg, #fcd34d 0%, transparent 100%);
+  margin: 0 1rem;
+}
+
+.pass-body-inner {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.5rem 1rem;
+  align-items: start;
+  padding: 0.65rem 1rem;
+  min-height: 0;
+}
+
+.pass-left-col {
+  grid-column: 1;
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
   align-items: flex-start;
+  min-width: 0;
+}
+
+.pass-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.pass-right-col {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .pass-photo-wrap {
@@ -326,47 +449,112 @@ select {
 }
 
 .pass-photo {
-  width: 80px;
-  height: 80px;
+  width: 76px;
+  height: 76px;
   object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  border: 2px solid #d97706;
+  display: block;
 }
 
-.pass-details {
-  flex: 1;
-  min-width: 0;
+.pass-detail-row {
+  display: grid;
+  grid-template-columns: 4.5em 1fr;
+  gap: 0.5rem;
+  align-items: baseline;
+  font-size: 0.8rem;
 }
 
-.pass-details p {
-  margin: 0 0 0.25rem;
-  font-size: 0.875rem;
+.pass-detail-label {
+  font-weight: 600;
+  color: #92400e;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pass-detail-value {
+  color: #1c1917;
+  font-weight: 500;
+}
+
+.pass-id-row .pass-detail-value {
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.pass-qr-wrap {
+  padding: 6px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e7e5e4;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .pass-qr {
-  flex-shrink: 0;
-  margin-left: auto;
+  display: block;
+}
+
+.pass-footer {
+  padding: 0.35rem 1rem;
+  font-size: 0.6rem;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-top: 1px solid #fef3c7;
+  margin-top: auto;
 }
 
 .print-btn {
   margin-top: 1rem;
   padding: 0.5rem 1rem;
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+  background: #b45309;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
   font-size: 0.875rem;
+  font-weight: 600;
+  font-family: var(--pass-font-body);
 }
 
 .print-btn:hover {
-  background: #e5e7eb;
+  background: #92400e;
 }
 
 @media print {
   body * { visibility: hidden; }
-  .pass-display,
-  .pass-display * { visibility: visible; }
-  .pass-display { position: absolute; left: 0; top: 0; max-width: none; }
-  .print-btn { display: none; }
+  .pass-card,
+  .pass-card * { visibility: visible; }
+  .pass-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .pass-card-inner {
+    box-shadow: none;
+    border: 1px solid #999;
+    max-width: 600px;
+    width: 600px;
+    height: 400px;
+    aspect-ratio: unset;
+    flex-shrink: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .pass-deity-panel,
+  .pass-content,
+  .pass-badge {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .print-btn { display: none !important; }
 }
 
 /* Admin area */

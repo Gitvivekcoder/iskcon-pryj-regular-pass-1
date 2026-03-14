@@ -1,13 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { postToSheet } from '../lib/api.js'
+import { dobToInputValue, dobFromInputValue } from '../lib/dateUtils.js'
 import PassDisplay from './PassDisplay.jsx'
-
-function normalizeDobInput(value) {
-  const digits = value.replace(/\D/g, '')
-  if (digits.length <= 2) return digits
-  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`
-  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`
-}
 
 export default function RegistrationForm() {
   const [name, setName] = useState('')
@@ -152,11 +146,9 @@ export default function RegistrationForm() {
       <label className="field">
         <span>Date of birth *</span>
         <input
-          type="text"
-          placeholder="DD/MM/YYYY"
-          value={dob}
-          onChange={(e) => setDob(normalizeDobInput(e.target.value))}
-          maxLength={10}
+          type="date"
+          value={dobToInputValue(dob)}
+          onChange={(e) => setDob(dobFromInputValue(e.target.value))}
           required
         />
       </label>

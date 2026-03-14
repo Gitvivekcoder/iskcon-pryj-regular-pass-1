@@ -14,6 +14,7 @@ export default function RegistrationForm() {
   const [error, setError] = useState('')
   const [registeredPass, setRegisteredPass] = useState(null)
   const [cameraActive, setCameraActive] = useState(false)
+  const [facingMode, setFacingMode] = useState('environment') // 'environment' = back, 'user' = front
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
@@ -25,10 +26,12 @@ export default function RegistrationForm() {
     }
   }, [])
 
-  async function startCamera() {
+  async function startCamera(preferredMode) {
     setError('')
+    const mode = preferredMode ?? facingMode
+    if (preferredMode) setFacingMode(preferredMode)
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } })
       streamRef.current = stream
       if (videoRef.current) videoRef.current.srcObject = stream
       setCameraActive(true)
@@ -44,6 +47,13 @@ export default function RegistrationForm() {
     }
     if (videoRef.current) videoRef.current.srcObject = null
     setCameraActive(false)
+  }
+
+  function switchCamera() {
+    if (!streamRef.current) return
+    const nextMode = facingMode === 'environment' ? 'user' : 'environment'
+    stopCamera()
+    startCamera(nextMode)
   }
 
   function capturePhoto() {
@@ -131,9 +141,14 @@ export default function RegistrationForm() {
                 Capture photo
               </button>
               {cameraActive && (
-                <button type="button" className="secondary-btn" onClick={stopCamera}>
-                  Stop camera
-                </button>
+                <>
+                  <button type="button" className="secondary-btn" onClick={switchCamera}>
+                    Switch camera
+                  </button>
+                  <button type="button" className="secondary-btn" onClick={stopCamera}>
+                    Stop camera
+                  </button>
+                </>
               )}
             </div>
           </div>

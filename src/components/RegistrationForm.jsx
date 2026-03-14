@@ -13,6 +13,7 @@ export default function RegistrationForm() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [registeredPass, setRegisteredPass] = useState(null)
+  const [cameraActive, setCameraActive] = useState(false)
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
@@ -30,6 +31,7 @@ export default function RegistrationForm() {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
       streamRef.current = stream
       if (videoRef.current) videoRef.current.srcObject = stream
+      setCameraActive(true)
     } catch (err) {
       setError('Camera access denied or not available.')
     }
@@ -41,6 +43,7 @@ export default function RegistrationForm() {
       streamRef.current = null
     }
     if (videoRef.current) videoRef.current.srcObject = null
+    setCameraActive(false)
   }
 
   function capturePhoto() {
@@ -124,10 +127,10 @@ export default function RegistrationForm() {
               <button type="button" className="secondary-btn" onClick={startCamera}>
                 Start camera
               </button>
-              <button type="button" className="secondary-btn" onClick={capturePhoto} disabled={!streamRef.current}>
+              <button type="button" className="secondary-btn" onClick={capturePhoto} disabled={!cameraActive}>
                 Capture photo
               </button>
-              {streamRef.current && (
+              {cameraActive && (
                 <button type="button" className="secondary-btn" onClick={stopCamera}>
                   Stop camera
                 </button>

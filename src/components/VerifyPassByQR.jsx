@@ -10,6 +10,8 @@ export default function VerifyPassByQR() {
   const [error, setError] = useState('')
   const [details, setDetails] = useState(null)
   const [loading, setLoading] = useState(false)
+  /** 'environment' = rear, 'user' = front (for mobile camera switch) */
+  const [facingMode, setFacingMode] = useState('environment')
   const scannerRef = useRef(null)
 
   function stopScanner() {
@@ -40,14 +42,14 @@ export default function VerifyPassByQR() {
       .finally(() => setLoading(false))
   }
 
-  function startScanner() {
+  function startScanner(useFacing = facingMode) {
     if (scannerRef.current) return
     setError('')
     setDetails(null)
     const html5Qr = new Html5Qrcode(QR_READER_ID)
     scannerRef.current = html5Qr
     html5Qr.start(
-      { facingMode: 'environment' },
+      { facingMode: useFacing },
       { fps: 10, qrbox: { width: 250, height: 250 } },
       (decodedText) => onScanSuccess(decodedText),
       () => {}
@@ -55,6 +57,13 @@ export default function VerifyPassByQR() {
       setError(err.message || 'Camera access failed.')
       scannerRef.current = null
     })
+  }
+
+  function switchCamera() {
+    const next = facingMode === 'environment' ? 'user' : 'environment'
+    setFacingMode(next)
+    stopScanner()
+    setTimeout(() => startScanner(next), 300)
   }
 
   useEffect(() => {
@@ -76,15 +85,39 @@ export default function VerifyPassByQR() {
       <div id={QR_READER_ID} className="qr-reader-container" />
 
       {!scanning && !details && (
-        <button type="button" className="submit-btn" onClick={startScanner}>
-          Start camera
-        </button>
+        <div className="camera-actions">
+          <p className="camera-option-hint">On mobile, choose camera:</p>
+          <div className="camera-switch-btns">
+            <button
+              type="button"
+              className={facingMode === 'environment' ? 'secondary-btn active' : 'secondary-btn'}
+              onClick={() => setFacingMode('environment')}
+            >
+              Rear camera
+            </button>
+            <button
+              type="button"
+              className={facingMode === 'user' ? 'secondary-btn active' : 'secondary-btn'}
+              onClick={() => setFacingMode('user')}
+            >
+              Front camera
+            </button>
+          </div>
+          <button type="button" className="submit-btn" onClick={() => startScanner()}>
+            Start camera
+          </button>
+        </div>
       )}
 
       {scanning && !details && (
-        <button type="button" className="secondary-btn" onClick={stopScanner}>
-          Stop camera
-        </button>
+        <div className="camera-actions">
+          <button type="button" className="secondary-btn" onClick={switchCamera}>
+            Switch to {facingMode === 'environment' ? 'front' : 'rear'} camera
+          </button>
+          <button type="button" className="secondary-btn" onClick={stopScanner}>
+            Stop camera
+          </button>
+        </div>
       )}
 
       {loading && <p className="verify-loading">Looking up pass…</p>}

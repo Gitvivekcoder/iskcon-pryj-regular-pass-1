@@ -1,20 +1,28 @@
 import { useState, useRef, useEffect } from 'react'
 import { postToSheet } from '../lib/api.js'
-import { dobToInputValue, dobFromInputValue } from '../lib/dateUtils.js'
 import PassDisplay from './PassDisplay.jsx'
 
-export default function RegistrationForm() {
+/** Convert YYYY-MM-DD (from input type="date") to DD/MM/YYYY for API/sheet. */
+function dateToDdMmYyyy(value) {
+  if (!value || !value.trim()) return ''
+  const [y, m, d] = value.trim().split('-')
+  return [d, m, y].join('/')
+}
+
+export default function RegistrationForm({ category = 'FOJ' }) {
   const [name, setName] = useState('')
   const [gender, setGender] = useState('')
   const [photo, setPhoto] = useState('')
   const [dob, setDob] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
+  const [address, setAddress] = useState('')
+  const [familyMember1, setFamilyMember1] = useState('')
+  const [familyMember2, setFamilyMember2] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [registeredPass, setRegisteredPass] = useState(null)
-  const [cameraActive, setCameraActive] = useState(false)
-  const [facingMode, setFacingMode] = useState('environment') // 'environment' = back, 'user' = front
+  const [cameraReady, setCameraReady] = useState(false)
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
@@ -26,15 +34,14 @@ export default function RegistrationForm() {
     }
   }, [])
 
-  async function startCamera(preferredMode) {
+  async function startCamera() {
     setError('')
-    const mode = preferredMode ?? facingMode
-    if (preferredMode) setFacingMode(preferredMode)
+    setCameraReady(false)
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } })
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
       streamRef.current = stream
       if (videoRef.current) videoRef.current.srcObject = stream
-      setCameraActive(true)
+      setCameraReady(true)
     } catch (err) {
       setError('Camera access denied or not available.')
     }
@@ -46,14 +53,7 @@ export default function RegistrationForm() {
       streamRef.current = null
     }
     if (videoRef.current) videoRef.current.srcObject = null
-    setCameraActive(false)
-  }
-
-  function switchCamera() {
-    if (!streamRef.current) return
-    const nextMode = facingMode === 'environment' ? 'user' : 'environment'
-    stopCamera()
-    startCamera(nextMode)
+    setCameraReady(false)
   }
 
   function capturePhoto() {
@@ -78,9 +78,15 @@ export default function RegistrationForm() {
       name: name.trim(),
       gender: gender.trim(),
       photo,
-      dob: dob.trim(),
+      dob: dateToDdMmYyyy(dob),
       phone: phone.trim(),
       email: email.trim(),
+      address: address.trim(),
+      category: category,
+      ...(category === 'FOLK' && {
+        familyMember1: familyMember1.trim(),
+        familyMember2: familyMember2.trim(),
+      }),
     })
       .then((data) => {
         if (data.error) throw new Error(data.error)
@@ -91,6 +97,9 @@ export default function RegistrationForm() {
         setDob('')
         setPhone('')
         setEmail('')
+        setAddress('')
+        setFamilyMember1('')
+        setFamilyMember2('')
       })
       .catch((err) => setError(err.message || 'Registration failed'))
       .finally(() => setLoading(false))
@@ -104,7 +113,7 @@ export default function RegistrationForm() {
     return (
       <div className="registration-result">
         <p className="success-msg">Pass registered successfully.</p>
-        <PassDisplay pass={registeredPass} onPrint={() => window.print()} />
+        <PassDisplay pass={registeredPass} />
         <button type="button" className="back-btn" onClick={registerAnother}>
           Register another person
         </button>
@@ -114,7 +123,7 @@ export default function RegistrationForm() {
 
   return (
     <form onSubmit={handleSubmit} className="registration-form">
-      <h3>Register a person</h3>
+      <h3>Register {category}</h3>
       <label className="field">
         <span>Name *</span>
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
@@ -137,18 +146,13 @@ export default function RegistrationForm() {
               <button type="button" className="secondary-btn" onClick={startCamera}>
                 Start camera
               </button>
-              <button type="button" className="secondary-btn" onClick={capturePhoto} disabled={!cameraActive}>
+              <button type="button" className="secondary-btn" onClick={capturePhoto} disabled={!cameraReady}>
                 Capture photo
               </button>
-              {cameraActive && (
-                <>
-                  <button type="button" className="secondary-btn" onClick={switchCamera}>
-                    Switch camera
-                  </button>
-                  <button type="button" className="secondary-btn" onClick={stopCamera}>
-                    Stop camera
-                  </button>
-                </>
+              {streamRef.current && (
+                <button type="button" className="secondary-btn" onClick={stopCamera}>
+                  Stop camera
+                </button>
               )}
             </div>
           </div>
@@ -165,8 +169,8 @@ export default function RegistrationForm() {
         <span>Date of birth *</span>
         <input
           type="date"
-          value={dobToInputValue(dob)}
-          onChange={(e) => setDob(dobFromInputValue(e.target.value))}
+          value={dob}
+          onChange={(e) => setDob(e.target.value)}
           required
         />
       </label>
@@ -184,6 +188,22 @@ export default function RegistrationForm() {
         <span>Email</span>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
       </label>
+      <label className="field">
+        <span>Address</span>
+        <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Full address" />
+      </label>
+      {category === 'FOLK' && (
+        <>
+          <label className="field">
+            <span>Family Member 1</span>
+            <input type="text" value={familyMember1} onChange={(e) => setFamilyMember1(e.target.value)} placeholder="Name (optional)" />
+          </label>
+          <label className="field">
+            <span>Family Member 2</span>
+            <input type="text" value={familyMember2} onChange={(e) => setFamilyMember2(e.target.value)} placeholder="Name (optional)" />
+          </label>
+        </>
+      )}
       {error && <p className="form-error">{error}</p>}
       <button type="submit" className="submit-btn" disabled={loading || !photo}>
         {loading ? 'Registering…' : 'Register'}

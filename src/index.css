@@ -30,6 +30,30 @@ button {
   cursor: pointer;
 }
 
+/* Hindi translations (alongside English for normal users) */
+.hindi {
+  font-size: 0.88em;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.submit-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.btn-hindi {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.view-pass-section p .hindi {
+  display: block;
+  margin-top: 0.35rem;
+}
+
 input,
 select {
   font: inherit;
@@ -295,266 +319,210 @@ select {
   font-weight: 500;
 }
 
-/* Pass card – landscape 3:2, structured layout, ISKCON Prayagraj */
-.pass-card {
+/* Pass display — devotional theme */
+.pass-display {
   margin-top: 2rem;
-  max-width: 100%;
+  max-width: 420px;
   width: 100%;
-  --pass-font-heading: 'Playfair Display', Georgia, serif;
-  --pass-font-body: 'Source Sans 3', system-ui, sans-serif;
+  font-family: Georgia, 'Times New Roman', serif;
 }
 
-.pass-card-inner {
-  aspect-ratio: 3 / 2;
-  max-width: 600px;
-  margin: 0 auto;
+.pass-display-content {
+  background: linear-gradient(180deg, #fefcf8 0%, #faf6ef 100%);
+  border: 2px solid #7c2d2d;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08);
-  display: flex;
-  background: #fff;
-  border: 1px solid #e7e5e4;
+  box-shadow: 0 4px 12px rgba(124, 45, 45, 0.15);
 }
 
-.pass-deity-panel {
-  width: 36%;
-  min-width: 0;
-  background: linear-gradient(180deg, #92400e 0%, #78350f 100%);
+/* Header: logo fills height with margin; FOLK ID etc. left-aligned after logo */
+.pass-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 0.75rem;
+  gap: 0.75rem;
+  padding: 0.4rem 0.5rem;
+  min-height: 64px;
+  background: linear-gradient(180deg, #fef7ed 0%, #fef3c7 100%);
+  border-bottom: 2px solid #7c2d2d;
 }
 
-.pass-deity-img {
-  width: 100%;
-  height: 100%;
+.pass-logo {
+  height: 52px;
+  width: auto;
   object-fit: contain;
-  border-radius: 6px;
+  flex-shrink: 0;
+  display: block;
 }
 
-.pass-deity-fallback {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #fef3c7;
-  text-align: center;
-  padding: 0.5rem;
-  font-family: var(--pass-font-body);
+.pass-header-right {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  margin-left: 0.25rem;
 }
 
-.pass-deity-fallback-title {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  opacity: 0.9;
-  text-transform: uppercase;
-}
-
-.pass-deity-fallback-name {
+.pass-heading {
+  margin: 0 0 0.1rem;
   font-size: 0.95rem;
   font-weight: 700;
-  margin: 0.25rem 0;
+  color: #7c2d2d;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
   line-height: 1.2;
 }
 
-.pass-deity-fallback-place {
-  font-size: 0.6rem;
-  opacity: 0.85;
-}
-
-.pass-content {
-  flex: 1;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  background: #fffbeb;
-  font-family: var(--pass-font-body);
-}
-
-.pass-header {
-  padding: 0.6rem 1rem 0.5rem;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.pass-org-name {
+.pass-tagline {
   margin: 0;
-  font-family: var(--pass-font-heading);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #78350f;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #92400e;
   letter-spacing: 0.02em;
+  line-height: 1.3;
 }
 
-.pass-badge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #b45309;
-  background: #fef3c7;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #fcd34d;
-}
-
-.pass-divider {
-  height: 1px;
-  background: linear-gradient(90deg, #fcd34d 0%, transparent 100%);
-  margin: 0 1rem;
-}
-
-.pass-body-inner {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
-  gap: 0.5rem 1rem;
-  align-items: start;
-  padding: 0.65rem 1rem;
-  min-height: 0;
-}
-
-.pass-left-col {
-  grid-column: 1;
+/* Body: left = photo + QR stacked, right = details */
+.pass-body {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
   align-items: flex-start;
-  min-width: 0;
+  padding: 0.75rem;
 }
 
-.pass-details {
+.pass-body-left {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  min-width: 0;
-}
-
-.pass-right-col {
-  grid-column: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .pass-photo-wrap {
   flex-shrink: 0;
+  width: 84px;
+  height: 84px;
+  border-radius: 8px;
+  border: 2px solid #7c2d2d;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .pass-photo {
-  width: 76px;
-  height: 76px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #d97706;
   display: block;
 }
 
-.pass-detail-row {
-  display: grid;
-  grid-template-columns: 4.5em 1fr;
-  gap: 0.5rem;
-  align-items: baseline;
-  font-size: 0.8rem;
-}
-
-.pass-detail-label {
-  font-weight: 600;
-  color: #92400e;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.pass-detail-value {
-  color: #1c1917;
-  font-weight: 500;
-}
-
-.pass-id-row .pass-detail-value {
-  font-family: ui-monospace, monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-}
-
 .pass-qr-wrap {
-  padding: 6px;
-  background: #fff;
+  width: 84px;
+  height: 84px;
+  padding: 0;
   border-radius: 8px;
-  border: 1px solid #e7e5e4;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border: 2px solid #7c2d2d;
+  background: #fff;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.pass-qr-wrap svg {
+  width: 80px;
+  height: 80px;
+  display: block;
 }
 
 .pass-qr {
   display: block;
 }
 
-.pass-footer {
-  padding: 0.35rem 1rem;
-  font-size: 0.6rem;
-  color: #78716c;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-top: 1px solid #fef3c7;
-  margin-top: auto;
+.pass-body-right {
+  flex: 1;
+  min-width: 0;
 }
 
-.print-btn {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
-  background: #b45309;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
+.pass-details {
+  min-width: 0;
+}
+
+.pass-details p {
+  margin: 0 0 0.3rem;
   font-size: 0.875rem;
+  color: #374151;
+  line-height: 1.45;
+}
+
+.pass-details strong {
+  color: #7c2d2d;
   font-weight: 600;
-  font-family: var(--pass-font-body);
 }
 
-.print-btn:hover {
-  background: #92400e;
-}
+/* Mobile: body stacks — photo + QR on top, details below; header stays compact */
+@media (max-width: 420px) {
+  .pass-display {
+    max-width: 100%;
+  }
 
-@media print {
-  body * { visibility: hidden; }
-  .pass-card,
-  .pass-card * { visibility: visible; }
-  .pass-card {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
+  .pass-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pass-body-left {
+    flex-direction: column;
     align-items: flex-start;
   }
-  .pass-card-inner {
-    box-shadow: none;
-    border: 1px solid #999;
-    max-width: 600px;
-    width: 600px;
-    height: 400px;
-    aspect-ratio: unset;
-    flex-shrink: 0;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+
+  .pass-photo-wrap {
+    width: 72px;
+    height: 72px;
   }
-  .pass-deity-panel,
-  .pass-content,
-  .pass-badge {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+
+  .pass-qr-wrap {
+    width: 72px;
+    height: 72px;
   }
-  .print-btn { display: none !important; }
+
+  .pass-qr-wrap svg {
+    width: 68px;
+    height: 68px;
+  }
+
+  .pass-header {
+    padding: 0.5rem 0.6rem;
+    min-height: 52px;
+  }
+
+  .pass-heading {
+    font-size: 0.85rem;
+  }
+
+  .pass-tagline {
+    font-size: 0.6rem;
+  }
+
+  .pass-logo {
+    width: 40px;
+  }
+}
+
+.download-btn {
+  margin-top: 1rem;
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(180deg, #7c2d2d 0%, #991b1b 100%);
+  color: #fff;
+  border: 1px solid #5c1d1d;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(124, 45, 45, 0.3);
+}
+
+.download-btn:hover {
+  background: linear-gradient(180deg, #991b1b 0%, #7f1d1d 100%);
+  box-shadow: 0 3px 8px rgba(124, 45, 45, 0.35);
 }
 
 /* Admin area */

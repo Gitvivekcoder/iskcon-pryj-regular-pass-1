@@ -23,6 +23,8 @@ export default function RegistrationForm({ category = 'FOJ' }) {
   const [error, setError] = useState('')
   const [registeredPass, setRegisteredPass] = useState(null)
   const [cameraReady, setCameraReady] = useState(false)
+  /** 'user' = front, 'environment' = rear (for mobile camera switch) */
+  const [cameraFacing, setCameraFacing] = useState('user')
   const videoRef = useRef(null)
   const streamRef = useRef(null)
 
@@ -34,17 +36,24 @@ export default function RegistrationForm({ category = 'FOJ' }) {
     }
   }, [])
 
-  async function startCamera() {
+  async function startCamera(facing = cameraFacing) {
     setError('')
     setCameraReady(false)
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: facing } })
       streamRef.current = stream
       if (videoRef.current) videoRef.current.srcObject = stream
+      setCameraFacing(facing)
       setCameraReady(true)
     } catch (err) {
       setError('Camera access denied or not available.')
     }
+  }
+
+  function switchCamera() {
+    const next = cameraFacing === 'user' ? 'environment' : 'user'
+    stopCamera()
+    startCamera(next)
   }
 
   function stopCamera() {
@@ -143,16 +152,41 @@ export default function RegistrationForm({ category = 'FOJ' }) {
           <div className="photo-capture">
             <video ref={videoRef} autoPlay playsInline muted className="capture-video" />
             <div className="capture-actions">
-              <button type="button" className="secondary-btn" onClick={startCamera}>
-                Start camera
-              </button>
-              <button type="button" className="secondary-btn" onClick={capturePhoto} disabled={!cameraReady}>
-                Capture photo
-              </button>
-              {streamRef.current && (
-                <button type="button" className="secondary-btn" onClick={stopCamera}>
-                  Stop camera
-                </button>
+              {!cameraReady ? (
+                <>
+                  <p className="camera-option-hint">On mobile, choose camera:</p>
+                  <div className="camera-switch-btns">
+                    <button
+                      type="button"
+                      className={cameraFacing === 'user' ? 'secondary-btn active' : 'secondary-btn'}
+                      onClick={() => setCameraFacing('user')}
+                    >
+                      Front camera
+                    </button>
+                    <button
+                      type="button"
+                      className={cameraFacing === 'environment' ? 'secondary-btn active' : 'secondary-btn'}
+                      onClick={() => setCameraFacing('environment')}
+                    >
+                      Rear camera
+                    </button>
+                  </div>
+                  <button type="button" className="secondary-btn" onClick={() => startCamera()}>
+                    Start camera
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button type="button" className="secondary-btn" onClick={capturePhoto}>
+                    Capture photo
+                  </button>
+                  <button type="button" className="secondary-btn" onClick={switchCamera}>
+                    Switch to {cameraFacing === 'user' ? 'rear' : 'front'} camera
+                  </button>
+                  <button type="button" className="secondary-btn" onClick={stopCamera}>
+                    Stop camera
+                  </button>
+                </>
               )}
             </div>
           </div>

@@ -14,8 +14,8 @@ export default function Landing() {
   return (
     <div className="landing">
       <header className="landing-header">
-        <h1>ISKCON Prayagraj</h1>
-        <p className="tagline">Regular Pass</p>
+        <h1>ISKCON Prayagraj <span className="hindi">इस्कॉन प्रयागराज</span></h1>
+        <p className="tagline">Regular Pass <span className="hindi">नियमित पास</span></p>
         {!adminLoggedIn && (
           <a href="#admin" className="admin-link" onClick={(e) => { e.preventDefault(); setShowViewPass(false); }}>
             Admin login
@@ -32,7 +32,7 @@ export default function Landing() {
           <>
             <AdminLogin onSuccess={handleAdminSuccess} />
             <button type="button" className="back-btn" onClick={() => setShowViewPass(true)}>
-              ← Back to View my pass
+              ← Back to View my pass <span className="hindi">(अपना पास देखें)</span>
             </button>
           </>
         )}

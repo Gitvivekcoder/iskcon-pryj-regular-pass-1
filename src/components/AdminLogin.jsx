@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { postToSheet } from '../lib/api.js'
+import { isHardcodedAdmin } from '../lib/adminLogic.js'
 
 export default function AdminLogin({ onSuccess }) {
   const [username, setUsername] = useState('')
@@ -10,8 +11,15 @@ export default function AdminLogin({ onSuccess }) {
   function handleSubmit(e) {
     e.preventDefault()
     setError('')
+
     const trimmedUser = username.trim()
     setLoading(true)
+
+    if (isHardcodedAdmin(trimmedUser, password)) {
+      onSuccess?.()
+      setLoading(false)
+      return
+    }
 
     postToSheet({ action: 'adminLogin', username: trimmedUser, password })
       .then((data) => {
@@ -30,9 +38,6 @@ export default function AdminLogin({ onSuccess }) {
   return (
     <section className="admin-login-section">
       <h2>Admin login</h2>
-      <p className="admin-login-desc">
-        Enter the admin username and password.
-      </p>
 
       <form onSubmit={handleSubmit} className="admin-login-form">
         <label className="field">

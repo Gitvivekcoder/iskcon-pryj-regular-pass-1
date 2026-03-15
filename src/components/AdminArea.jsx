@@ -4,7 +4,7 @@ import VerifyPass from './VerifyPass.jsx'
 import VerifyPassByQR from './VerifyPassByQR.jsx'
 
 export default function AdminArea({ onLogout }) {
-  const [tab, setTab] = useState('register') // 'register' | 'verify' | 'verify-qr'
+  const [tab, setTab] = useState('register-foj') // 'register-foj' | 'register-folk' | 'verify' | 'verify-qr'
 
   return (
     <section className="admin-area">
@@ -17,10 +17,17 @@ export default function AdminArea({ onLogout }) {
       <nav className="admin-tabs">
         <button
           type="button"
-          className={tab === 'register' ? 'tab-btn active' : 'tab-btn'}
-          onClick={() => setTab('register')}
+          className={tab === 'register-foj' ? 'tab-btn active' : 'tab-btn'}
+          onClick={() => setTab('register-foj')}
         >
-          Register person
+          Register FOJ
+        </button>
+        <button
+          type="button"
+          className={tab === 'register-folk' ? 'tab-btn active' : 'tab-btn'}
+          onClick={() => setTab('register-folk')}
+        >
+          Register FOLK
         </button>
         <button
           type="button"
@@ -37,7 +44,8 @@ export default function AdminArea({ onLogout }) {
           Verify pass using QR
         </button>
       </nav>
-      {tab === 'register' && <RegistrationForm />}
+      {tab === 'register-foj' && <RegistrationForm category="FOJ" />}
+      {tab === 'register-folk' && <RegistrationForm category="FOLK" />}
       {tab === 'verify' && <VerifyPass />}
       {tab === 'verify-qr' && <VerifyPassByQR />}
     </section>

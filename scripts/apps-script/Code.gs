@@ -3,7 +3,7 @@
  * Deploy as Web App: Execute as "Me", Who has access: "Anyone".
  *
  * Sheet 1: "Admin" - columns: Username (A), Password (B). Row 1 = headers, row 2+ = data.
- * Sheet 2: "Registrations" - columns: Timestamp (A), Pass ID (B), Name (C), Gender (D), Photo (E), Date of Birth (F), Phone (G), Email (H). Row 1 = headers.
+ * Sheet 2: "Registrations" - columns: Timestamp (A), Pass ID (B), Name (C), Gender (D), Photo (E), Date of Birth (F), Phone (G), Email (H), Address (I), Category (J), Family Member 1 (K), Family Member 2 (L). Row 1 = headers.
  *
  * CORS: Apps Script does not support doOptions(), so the frontend sends POST with Content-Type: text/plain
  * (and body as JSON string) to avoid a preflight OPTIONS request. doPost still parses the body as JSON.
@@ -78,11 +78,13 @@ function getRegistrationsSheet() {
   return getSpreadsheet().getSheetByName('Registrations');
 }
 
-/** Generate short unique alphanumeric Pass ID (Option B): 8 chars */
-function generatePassId() {
+/** Generate short unique alphanumeric Pass ID with category prefix: FOJ-xxxxxx or FOLK-xxxxxx */
+function generatePassId(category) {
+  var prefix = (category || '').toString().trim().toUpperCase();
+  if (prefix !== 'FOJ' && prefix !== 'FOLK') prefix = 'FOJ';
   var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // avoid 0,O,1,I
-  var id = '';
-  for (var i = 0; i < 8; i++) {
+  var id = prefix + '-';
+  for (var i = 0; i < 6; i++) {
     id += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   var sheet = getRegistrationsSheet();
@@ -91,7 +93,7 @@ function generatePassId() {
   for (var r = 1; r < data.length; r++) {
     if (data[r][1]) existingIds[data[r][1]] = true;
   }
-  if (existingIds[id]) return generatePassId();
+  if (existingIds[id]) return generatePassId(category);
   return id;
 }
 
@@ -185,7 +187,7 @@ function handleGetPassById(body) {
   return { error: 'not found' };
 }
 
-/** Registrations row to object: timestamp, passId, name, gender, photo, dob, phone, email */
+/** Registrations row to object: timestamp, passId, name, gender, photo, dob, phone, email, address, category, familyMember1, familyMember2 */
 function rowToPassObject(row, rowIndex) {
   return {
     timestamp: row[0],
@@ -195,11 +197,15 @@ function rowToPassObject(row, rowIndex) {
     photo: row[4] || '',
     dob: toCanonicalDob(row[5]) || (row[5] != null ? String(row[5]) : ''),
     phone: row[6] || '',
-    email: row[7] || ''
+    email: row[7] || '',
+    address: (row[8] != null) ? String(row[8]).trim() : '',
+    category: (row[9] != null) ? String(row[9]).trim() : '',
+    familyMember1: (row[10] != null) ? String(row[10]).trim() : '',
+    familyMember2: (row[11] != null) ? String(row[11]).trim() : ''
   };
 }
 
-/** action: register. Body: { name, gender, photo, dob, phone, email } */
+/** action: register. Body: { name, gender, photo, dob, phone, email, address, category, familyMember1?, familyMember2? } */
 function handleRegister(body) {
   var name = (body.name || '').toString().trim();
   var gender = (body.gender || '').toString().trim();
@@ -207,20 +213,24 @@ function handleRegister(body) {
   var dob = (body.dob || '').toString().trim();
   var phone = (body.phone || '').toString().trim();
   var email = (body.email || '').toString().trim();
+  var address = (body.address || '').toString().trim();
+  var category = (body.category || '').toString().trim();
+  var familyMember1 = (body.familyMember1 || '').toString().trim();
+  var familyMember2 = (body.familyMember2 || '').toString().trim();
 
   if (!name) return { error: 'Name is required' };
   if (!dob) return { error: 'Date of birth is required' };
   if (!phone) return { error: 'Phone is required' };
 
-  var passId = generatePassId();
+  var passId = generatePassId(category);
   var timestamp = new Date();
 
   var sheet = getRegistrationsSheet();
   if (!sheet) return { error: 'Registrations sheet not found' };
 
-  sheet.appendRow([timestamp, passId, name, gender, photo, dob, phone, email]);
+  sheet.appendRow([timestamp, passId, name, gender, photo, dob, phone, email, address, category, familyMember1, familyMember2]);
   var lastRow = sheet.getLastRow();
-  var row = sheet.getRange(lastRow, 1, lastRow, 8).getValues()[0];
+  var row = sheet.getRange(lastRow, 1, lastRow, 12).getValues()[0];
 
   return rowToPassObject(row, lastRow);
 }
